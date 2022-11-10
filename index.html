@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC Demo</title>
+  </head>
+  <body>
+    <h1>WebRTC Demo with Vannila Javascript</h1>
+    <h2>1. Start your Webcam</h2>
+    <div class="videos">
+      <span>
+        <h3>Local Stream</h3>
+        <video id="webcamVideo" muted autoplay playsinline></video>
+      </span>
+      <span>
+        <h3>Remote Stream</h3>
+        <video id="remoteVideo" autoplay playsinline></video>
+      </span>
+    </div>
+    <button id="webcamButton">Start webcam</button>
+    <div>
+      <p>Check the current state of the peer connection</p>
+      <button id="stateButton">Check connection state</button>
+      =>
+      <strong><span id="connectionText"></span></strong>
+    </div>
+
+    <h2>2. Create a new Call</h2>
+    <p style="padding: 0% 10% 0% 10%">
+      Creates an offer and sets it as the localDescription, which in turn starts
+      generating the ICE candidates. <br />
+
+      ICE candidates contain an IP/port pair which can be used to connect to the
+      local peer.
+      <br />
+      (MAKE A CALL ONLY FROM THE FIRST PEER)
+    </p>
+    <button id="callButton" disabled>Create Call (offer)</button>
+
+    <h2>3. Join a Call</h2>
+    <p>
+      Answer the call from a different
+      <a href="" target="_blank">browser window</a>
+    </p>
+    <p style="padding: 0% 6% 0% 6%">
+      Paste the latest offer from the first peer which was copied automatically
+      to your clipboard.
+    </p>
+    <input id="callInput" />
+    <button id="answerButton" disabled>Answer</button>
+
+    <h2>4 Add Answer</h2>
+    <p style="padding: 0% 6% 0% 6%">
+      Go to the first peer and add the answer from the second peer
+    </p>
+    <input id="addAnswerInput" />
+    <button id="addAnswerButton" disabled>Add</button>
+    <br /><br /><br />
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
