@@ -28,8 +28,10 @@ const remoteVideo = document.getElementById("remoteVideo");
 const addAnswerButton = document.getElementById("addAnswerButton");
 const stateButton = document.getElementById("stateButton");
 const connectionText = document.getElementById("connectionText");
+const callLoader = document.getElementById("call-loader");
+const answerLoader = document.getElementById("answer-loader");
 
-async function checkRTCState(event, objTobeCopied) {
+async function checkRTCState(event, loader, objTobeCopied) {
   // event.candidate makes sure that the candidate exists
   if (
     event &&
@@ -38,6 +40,7 @@ async function checkRTCState(event, objTobeCopied) {
   ) 
   {
     await navigator.clipboard.writeText(JSON.stringify(objTobeCopied));
+    loader.hidden = true;
     alert(
       "Done gathering candidates.\n" +
       "The offer/answer has been copied to your clipboard.\n" +
@@ -85,18 +88,20 @@ webcamButton.onclick = async () => {
 };
 
 callButton.addEventListener("click", async () => {
-  // Get candidates for caller (local peer)
-  pc.onicecandidate = async (event) => {
-    await checkRTCState(event, pc.localDescription);
-  };
-
+  callLoader.hidden = false;
   const offerDescription = await pc.createOffer();
   // when we call setLocalDescription, it automatically starts generating ICE candidtes for our local
   // user. Those candidates cotain IP/PORT pair which we can use to establish a connection
   await pc.setLocalDescription(offerDescription);
+
+  // Get candidates for caller (local peer)
+  pc.onicecandidate = async (event) => {
+    await checkRTCState(event, callLoader, pc.localDescription);
+  };
 });
 
 answerButton.addEventListener("click", async () => {
+  answerLoader.hidden = false;
   let peerOneOffer = JSON.parse(callInput.value);
   pc.setRemoteDescription(new RTCSessionDescription(peerOneOffer));
 
@@ -106,7 +111,7 @@ answerButton.addEventListener("click", async () => {
   await pc.setLocalDescription(answer)
 
   pc.onicecandidate = async (event) => {
-    await checkRTCState(event, answer);
+    await checkRTCState(event, answerLoader, answer);
   };
 });
 

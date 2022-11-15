@@ -37,7 +37,10 @@
       <br />
       (MAKE A CALL ONLY FROM THE FIRST PEER)
     </p>
-    <button id="callButton" disabled>Create Call (offer)</button>
+    <div class="call-container">
+      <button id="callButton" disabled>Create Call (offer)</button>
+      <div class="loading" id="call-loader" hidden></div>
+    </div>
 
     <h2>3. Join a Call</h2>
     <p>
@@ -48,8 +51,11 @@
       Paste the latest offer from the first peer which was copied automatically
       to your clipboard.
     </p>
-    <input id="callInput" />
-    <button id="answerButton" disabled>Answer</button>
+    <div class="call-container">
+      <input id="callInput" />
+      <button id="answerButton" disabled>Answer</button>
+      <div class="loading" id="answer-loader" hidden></div>
+    </div>
 
     <h2>4 Add Answer</h2>
     <p style="padding: 0% 6% 0% 6%">
