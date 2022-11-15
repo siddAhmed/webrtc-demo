@@ -26,9 +26,29 @@ const callInput = document.getElementById("callInput");
 const answerButton = document.getElementById("answerButton");
 const remoteVideo = document.getElementById("remoteVideo");
 const addAnswerButton = document.getElementById("addAnswerButton");
-const hangupButton = document.getElementById("hangupButton");
 const stateButton = document.getElementById("stateButton");
 const connectionText = document.getElementById("connectionText");
+
+async function checkRTCState(event, objTobeCopied) {
+  // event.candidate makes sure that the candidate exists
+  if (
+    event &&
+    event.target &&
+    event.target.iceGatheringState === "complete"
+  ) 
+  {
+    await navigator.clipboard.writeText(JSON.stringify(objTobeCopied));
+    alert(
+      "Done gathering candidates.\n" +
+      "The offer/answer has been copied to your clipboard.\n" +
+      "Paste it into the other peer's respective field"
+    );
+  } else if (event && event.candidate == null) {
+    console.log("got null candidate");
+  } else {
+    console.log(event.target.iceGatheringState, event);
+  }
+};
 
 stateButton.addEventListener("click", () => {
   connectionText.innerText = pc.connectionState;
@@ -66,19 +86,14 @@ webcamButton.onclick = async () => {
 
 callButton.addEventListener("click", async () => {
   // Get candidates for caller (local peer)
-  pc.onicecandidate = (event) => {
-    // event.candidate makes sure that the candidate exists
-    if (event.candidate) {
-      console.log("new ice candidate created!: ", event.candidate.toJSON());
-      navigator.clipboard.writeText(JSON.stringify(pc.localDescription));
-    }
+  pc.onicecandidate = async (event) => {
+    await checkRTCState(event, pc.localDescription);
   };
 
   const offerDescription = await pc.createOffer();
   // when we call setLocalDescription, it automatically starts generating ICE candidtes for our local
   // user. Those candidates cotain IP/PORT pair which we can use to establish a connection
   await pc.setLocalDescription(offerDescription);
-  alert("The offer has been copied to your clipboard. Paste it into the second peer's 'Answer' field");
 });
 
 answerButton.addEventListener("click", async () => {
@@ -88,12 +103,11 @@ answerButton.addEventListener("click", async () => {
   // wait for the resolved promise from createAnswer
   // then wait for teh setLocalDescription to set the local description as answer
   const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer)
 
-  pc.setLocalDescription(answer).then(() => {
-    navigator.clipboard.writeText(JSON.stringify(answer));
-    alert(`The offer answer has been copied to your clipboard. 
-    \nPaste it in first peer's "Add Answer" box.`);
-  });
+  pc.onicecandidate = async (event) => {
+    await checkRTCState(event, answer);
+  };
 });
 
 addAnswerButton.addEventListener("click", async () => {
@@ -102,5 +116,4 @@ addAnswerButton.addEventListener("click", async () => {
     JSON.parse(addAnswerInput.value)
   );
   await pc.setRemoteDescription(remoteDesc);
-  hangupButton.disabled = false;
 });
