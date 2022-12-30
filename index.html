@@ -19,10 +19,12 @@
         <video id="remoteVideo" autoplay playsinline></video>
       </span>
     </div>
-    <button id="webcamButton">Start webcam</button>
+    <button class="glow-on-hover" id="webcamButton">Start webcam</button>
     <div>
       <p>Check the current state of the peer connection</p>
-      <button id="stateButton">Check connection state</button>
+      <button class="hover-button" id="stateButton">
+        Check connection state
+      </button>
       =>
       <strong><span id="connectionText"></span></strong>
     </div>
@@ -35,10 +37,12 @@
       ICE candidates contain an IP/port pair which can be used to connect to the
       local peer.
       <br />
-      (MAKE A CALL ONLY FROM THE FIRST PEER)
+      (INITIATE THE CALL ONLY FROM THE FIRST PEER)
     </p>
     <div class="call-container">
-      <button id="callButton" disabled>Create Call (offer)</button>
+      <button class="hover-button" id="callButton" disabled>
+        Create Call (offer)
+      </button>
       <div class="loading" id="call-loader" hidden></div>
     </div>
 
@@ -46,6 +50,7 @@
     <p>
       Answer the call from a different
       <a href="" target="_blank">browser window</a>
+      or device
     </p>
     <p style="padding: 0% 6% 0% 6%">
       Paste the latest offer from the first peer which was copied automatically
@@ -53,7 +58,7 @@
     </p>
     <div class="call-container">
       <input id="callInput" />
-      <button id="answerButton" disabled>Answer</button>
+      <button id="answerButton" class="hover-button" disabled>Answer</button>
       <div class="loading" id="answer-loader" hidden></div>
     </div>
 
@@ -62,7 +67,7 @@
       Go to the first peer and add the answer from the second peer
     </p>
     <input id="addAnswerInput" />
-    <button id="addAnswerButton" disabled>Add</button>
+    <button id="addAnswerButton" class="hover-button" disabled>Add</button>
     <br /><br /><br />
     <script type="module" src="/main.js"></script>
   </body>

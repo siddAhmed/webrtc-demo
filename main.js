@@ -1,16 +1,41 @@
 import "./style.css";
+let servers = null;
 
-const servers = {
-  iceServers: [
-    {
-      urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:stun1.l.google.com:19302",
-        "stun:stun2.l.google.com:19302",
+fetch("./config.json").then((response) => {
+  response.json().then((data) => {
+    /* ICE will try all the URLs you list here, 
+    so the more you include, the longer connections will take to establish. */
+    servers = {
+      iceServers: [
+        {
+          urls: "stun:relay.metered.ca:80",
+        },
+        {
+          urls: "turn:relay.metered.ca:443",
+          username: data.username,
+          credential: data.credential,
+        },
+        {
+          urls: "turn:relay.metered.ca:80",
+          username: data.username,
+          credential: data.credential,
+        },
+        // {
+        //   urls: "turn:relay.metered.ca:443?transport=tcp",
+        //   username: data.username,
+        //   credential: data.credential,
+        // },
+        // {
+        //   urls: [
+        //     "stun:stun.l.google.com:19302",
+        //     "stun:stun1.l.google.com:19302",
+        //     "stun:stun2.l.google.com:19302",
+        //   ],
+        // },
       ],
-    },
-  ],
-};
+    };
+  });
+});
 
 // Global states
 // the actual peer connection object which emits events & generates ice candidates
@@ -31,27 +56,31 @@ const connectionText = document.getElementById("connectionText");
 const callLoader = document.getElementById("call-loader");
 const answerLoader = document.getElementById("answer-loader");
 
-async function checkRTCState(event, loader, objTobeCopied) {
-  // event.candidate makes sure that the candidate exists
-  if (
-    event &&
-    event.target &&
-    event.target.iceGatheringState === "complete"
-  ) 
-  {
-    await navigator.clipboard.writeText(JSON.stringify(objTobeCopied));
-    loader.hidden = true;
-    alert(
-      "Done gathering candidates.\n" +
-      "The offer/answer has been copied to your clipboard.\n" +
-      "Paste it into the other peer's respective field"
-    );
-  } else if (event && event.candidate == null) {
-    console.log("got null candidate");
-  } else {
-    console.log(event.target.iceGatheringState, event);
+async function copyIce(loader, objTobeCopied) {
+  await navigator.clipboard.writeText(JSON.stringify(objTobeCopied));
+  loader.hidden = true;
+  console.log("Done gathering candidates, copied SDP to clipboard.\n");
+}
+
+async function checkIceState(event, loader, objTobeCopied) {
+  let connection = event.target;
+
+  switch (connection.iceGatheringState) {
+    case "gathering":
+      console.log("collection of candidates has begun");
+      // Not waiting more than 7 seconds for the ice candidates to be generated
+      // Either the gathering state will be complete or
+      // the timeout will complete candidates will be copied to the clipboard
+      setTimeout(() => {
+        console.log("Timeout exhausted for ice candidates gathering.");
+        copyIce(callLoader, pc.localDescription);
+      }, 7000);
+      break;
+    case "complete":
+      copyIce(loader, objTobeCopied);
+      break;
   }
-};
+}
 
 stateButton.addEventListener("click", () => {
   connectionText.innerText = pc.connectionState;
@@ -89,18 +118,26 @@ webcamButton.onclick = async () => {
 
 callButton.addEventListener("click", async () => {
   callLoader.hidden = false;
-  const offerDescription = await pc.createOffer();
+  const offerDescription = await pc.createOffer({
+    offerToReceiveAudio: true,
+    offerToReceiveVideo: true,
+  });
   // when we call setLocalDescription, it automatically starts generating ICE candidtes for our local
   // user. Those candidates cotain IP/PORT pair which we can use to establish a connection
   await pc.setLocalDescription(offerDescription);
 
   // Get candidates for caller (local peer)
-  pc.onicecandidate = async (event) => {
-    await checkRTCState(event, callLoader, pc.localDescription);
+  pc.onicegatheringstatechange = async (ev) => {
+    await checkIceState(ev, callLoader, pc.localDescription);
   };
 });
 
 answerButton.addEventListener("click", async () => {
+  if (!callInput.value) {
+    alert("Please enter the SDP offer in the answer input field");
+    return;
+  }
+
   answerLoader.hidden = false;
   let peerOneOffer = JSON.parse(callInput.value);
   pc.setRemoteDescription(new RTCSessionDescription(peerOneOffer));
@@ -108,14 +145,19 @@ answerButton.addEventListener("click", async () => {
   // wait for the resolved promise from createAnswer
   // then wait for teh setLocalDescription to set the local description as answer
   const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer)
+  await pc.setLocalDescription(answer);
 
-  pc.onicecandidate = async (event) => {
-    await checkRTCState(event, answerLoader, answer);
+  pc.onicegatheringstatechange = async (event) => {
+    await checkIceState(event, answerLoader, answer);
   };
 });
 
 addAnswerButton.addEventListener("click", async () => {
+  if (!addAnswerInput.value) {
+    alert("Please enter the SDP answer to the offer in the input field");
+    return;
+  }
+
   console.log("Received offer answer: \n", JSON.parse(addAnswerInput.value));
   const remoteDesc = new RTCSessionDescription(
     JSON.parse(addAnswerInput.value)
