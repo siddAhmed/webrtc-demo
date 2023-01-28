@@ -1,45 +1,7 @@
 import "./style.css";
-let servers = null;
+import peerConnection from "./config.js";
 
-fetch("./config.json").then((response) => {
-  response.json().then((data) => {
-    /* ICE will try all the URLs you list here, 
-    so the more you include, the longer connections will take to establish. */
-    servers = {
-      iceServers: [
-        {
-          urls: "stun:relay.metered.ca:80",
-        },
-        {
-          urls: "turn:relay.metered.ca:443",
-          username: data.username,
-          credential: data.credential,
-        },
-        {
-          urls: "turn:relay.metered.ca:80",
-          username: data.username,
-          credential: data.credential,
-        },
-        // {
-        //   urls: "turn:relay.metered.ca:443?transport=tcp",
-        //   username: data.username,
-        //   credential: data.credential,
-        // },
-        // {
-        //   urls: [
-        //     "stun:stun.l.google.com:19302",
-        //     "stun:stun1.l.google.com:19302",
-        //     "stun:stun2.l.google.com:19302",
-        //   ],
-        // },
-      ],
-    };
-  });
-});
-
-// Global states
-// the actual peer connection object which emits events & generates ice candidates
-let pc = new RTCPeerConnection(servers);
+let pc = peerConnection;
 
 let localStream = null;
 let remoteStream = null;

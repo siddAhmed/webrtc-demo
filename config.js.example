@@ -1,0 +1,20 @@
+const servers = {
+    iceServers: [
+      {
+        urls: "stun:relay.metered.ca:80",
+      },
+      {
+        urls: "turn:relay.metered.ca:443",
+        username: "",
+        credential: "",
+      },
+      {
+        urls: "turn:relay.metered.ca:80",
+        username: "",
+        credential: "",
+      },
+    ]
+};
+
+let peerConnection = new RTCPeerConnection(servers);
+export default peerConnection;
