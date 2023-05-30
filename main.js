@@ -80,6 +80,8 @@ webcamButton.onclick = async () => {
 
 callButton.addEventListener("click", async () => {
   callLoader.hidden = false;
+  callInput.disabled = true;
+
   const offerDescription = await pc.createOffer({
     offerToReceiveAudio: true,
     offerToReceiveVideo: true,
@@ -92,6 +94,7 @@ callButton.addEventListener("click", async () => {
   pc.onicegatheringstatechange = async (ev) => {
     await checkIceState(ev, callLoader, pc.localDescription);
   };
+
 });
 
 answerButton.addEventListener("click", async () => {
@@ -100,7 +103,9 @@ answerButton.addEventListener("click", async () => {
     return;
   }
 
+  addAnswerInput.disabled = true;
   answerLoader.hidden = false;
+
   let peerOneOffer = JSON.parse(callInput.value);
   pc.setRemoteDescription(new RTCSessionDescription(peerOneOffer));
 

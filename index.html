@@ -1,74 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebRTC Demo</title>
-  </head>
-  <body>
-    <h1>WebRTC Demo with Vannila Javascript</h1>
-    <h2>1. Start your Webcam</h2>
-    <div class="videos">
-      <span>
-        <h3>Local Stream</h3>
-        <video id="webcamVideo" muted autoplay playsinline></video>
-      </span>
-      <span>
-        <h3>Remote Stream</h3>
-        <video id="remoteVideo" autoplay playsinline></video>
-      </span>
-    </div>
-    <button class="glow-on-hover" id="webcamButton">Start webcam</button>
-    <div>
-      <p>Check the current state of the peer connection</p>
-      <button class="hover-button" id="stateButton">
-        Check connection state
-      </button>
-      =>
-      <strong><span id="connectionText"></span></strong>
-    </div>
 
-    <h2>2. Create a new Call</h2>
-    <p style="padding: 0% 10% 0% 10%">
-      Creates an offer and sets it as the localDescription, which in turn starts
-      generating the ICE candidates. <br />
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="icon.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>WebRTC Demo</title>
+</head>
 
-      ICE candidates contain an IP/port pair which can be used to connect to the
-      local peer.
-      <br />
-      (INITIATE THE CALL ONLY FROM THE FIRST PEER)
-    </p>
-    <div class="call-container">
-      <button class="hover-button" id="callButton" disabled>
-        Create Call (offer)
-      </button>
-      <div class="loading" id="call-loader" hidden></div>
-    </div>
+<body>
+	<h1>WebRTC Demo with Vannila Javascript</h1>
+	<h2>1. Start your Webcam</h2>
+	<div class="videos flex">
+		<div class="vid-container">
+			<h3>Local Stream</h3>
+			<video id="webcamVideo" muted autoplay playsinline></video>
+		</div>
+		<div class="vid-container">
+			<h3>Remote Stream</h3>
+			<video id="remoteVideo" autoplay playsinline></video>
+		</div>
+	</div>
+	<button class="glow-on-hover" id="webcamButton">Start webcam</button>
+	<div>
+		<p>Check the current state of the peer connection</p>
+		<button class="hover-button" id="stateButton">
+			Check connection state
+		</button>
+		=>
+		<strong><span id="connectionText"></span></strong>
+	</div>
 
-    <h2>3. Join a Call</h2>
-    <p>
-      Answer the call from a different
-      <a href="" target="_blank">browser window</a>
-      or device
-    </p>
-    <p style="padding: 0% 6% 0% 6%">
-      Paste the latest offer from the first peer which was copied automatically
-      to your clipboard.
-    </p>
-    <div class="call-container">
-      <input id="callInput" />
-      <button id="answerButton" class="hover-button" disabled>Answer</button>
-      <div class="loading" id="answer-loader" hidden></div>
-    </div>
+	<h2>2. Create a new Call</h2>
+	<p style="padding: 0% 10% 0% 10%">
+		Creates an offer and sets it as the localDescription, which in turn starts
+		generating the ICE candidates. <br />
 
-    <h2>4 Add Answer</h2>
-    <p style="padding: 0% 6% 0% 6%">
-      Go to the first peer and add the answer from the second peer
-    </p>
-    <input id="addAnswerInput" />
-    <button id="addAnswerButton" class="hover-button" disabled>Add</button>
-    <br /><br /><br />
-    <script type="module" src="/main.js"></script>
-  </body>
+		ICE candidates contain an IP/port pair which can be used to connect to the
+		local peer.
+		<br />
+		(INITIATE THE CALL ONLY FROM THE FIRST PEER)
+	</p>
+	<div class="call-container">
+		<button class="hover-button" id="callButton" disabled>
+			Create Call (offer)
+		</button>
+		<div class="loading" id="call-loader" hidden></div>
+	</div>
+
+	<h2>3. Join a Call</h2>
+	<p>
+		Answer the call from a different
+		<a href="" target="_blank">browser window</a>
+		or device
+	</p>
+	<p style="padding: 0% 6% 0% 6%">
+		Paste the latest offer from the first peer which was copied automatically
+		to your clipboard.
+	</p>
+	<div class="call-container">
+		<input id="callInput" />
+		<button id="answerButton" class="hover-button" disabled>Answer</button>
+		<div class="loading" id="answer-loader" hidden></div>
+	</div>
+
+	<h2>4 Add Answer</h2>
+	<p style="padding: 0% 6% 0% 6%">
+		Go to the first peer and add the answer from the second peer
+	</p>
+	<input id="addAnswerInput" />
+	<button id="addAnswerButton" class="hover-button" disabled>Add</button>
+	<br /><br /><br />
+	<script type="module" src="./main.js"></script>
+</body>
+
 </html>
