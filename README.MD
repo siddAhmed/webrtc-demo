@@ -37,8 +37,10 @@ npx vite build
 
 - [Vite documentation](https://vitejs.com/docs/) - The official documentation for Vite
 - [Guide](https://ourcodeworld.com/articles/read/1175/how-to-create-and-configure-your-own-stun-turn-server-with-coturn-in-ubuntu-18-04) for setting up Coturn
-- [WebRTC Internals](chrome://webrtc-internals/) for debugging WebRTC errors
-
+- WebRTC Internals for debugging WebRTC errors 
+    - `chrome://webrtc-internals/`
+- DevTools for debugging Android browsers remotely
+    - `chrome://inspect/#devices`
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
